@@ -1,0 +1,40 @@
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.buildlog/
+.history
+.svn/
+migrate_working_dir/
+
+# IntelliJ / Android Studio
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# VS Code
+.vscode/
+
+# Dart / Flutter
+.dart_tool/
+.packages
+.flutter-plugins
+.flutter-plugins-dependencies
+build/
+**/doc/api/
+
+# Libraries must not commit their lockfile.
+# https://dart.dev/guides/libraries/private-files#pubspeclock
+pubspec.lock
+example/pubspec.lock
+
+# Example app build output
+example/build/
+example/.dart_tool/
+
+# Coverage
+coverage/

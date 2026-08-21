@@ -1,0 +1,34 @@
+name: adaptive_stat_card
+description: An overflow-safe Flutter stat card widget for dashboards, with adaptive text fitting, accessibility text-scale support and zero runtime dependencies.
+version: 0.1.0
+repository: https://github.com/Arpit980jai/statcard
+issue_tracker: https://github.com/Arpit980jai/statcard/issues
+topics:
+  - ui
+  - widgets
+  - dashboard
+  - text
+  - accessibility
+
+environment:
+  sdk: ^3.10.0
+  flutter: ">=3.38.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_lints: ^6.0.0
+  flutter_test:
+    sdk: flutter
+
+platforms:
+  android:
+  ios:
+  linux:
+  macos:
+  web:
+  windows:
+
+flutter:

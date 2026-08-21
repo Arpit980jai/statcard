@@ -1,0 +1,24 @@
+# A .pubignore replaces .gitignore entirely for publishing, so build output has
+# to be listed here as well as there.
+
+# Build and tool output
+build/
+.dart_tool/
+coverage/
+example/build/
+example/.dart_tool/
+
+# Repository-only material
+.github/
+doc/raw/
+*.iml
+.idea/
+
+# Platform scaffolding for the example app; the example ships as source only.
+example/android/
+example/ios/
+example/web/
+example/linux/
+example/macos/
+example/windows/
+example/test/
