@@ -31,6 +31,8 @@ class StatCardThemeData extends ThemeExtension<StatCardThemeData> {
     this.downColor,
     this.flatColor,
     this.skeletonBaseColor,
+    this.sparklineColor,
+    this.sparklineStrokeWidth,
     this.valueStyle,
     this.labelStyle,
     this.unitStyle,
@@ -63,6 +65,20 @@ class StatCardThemeData extends ThemeExtension<StatCardThemeData> {
 
   /// Base colour of the pulsing bars shown while a card is loading.
   final Color? skeletonBaseColor;
+
+  /// Stroke colour of the sparkline drawn under the label.
+  ///
+  /// ```dart
+  /// const StatCardThemeData(sparklineColor: Color(0xFF3B6EF3));
+  /// ```
+  final Color? sparklineColor;
+
+  /// Stroke width of the sparkline drawn under the label.
+  ///
+  /// ```dart
+  /// const StatCardThemeData(sparklineStrokeWidth: 2);
+  /// ```
+  final double? sparklineStrokeWidth;
 
   /// Text style of the headline value.
   final TextStyle? valueStyle;
@@ -113,6 +129,8 @@ class StatCardThemeData extends ThemeExtension<StatCardThemeData> {
       downColor: isDark ? const Color(0xFFF87171) : const Color(0xFFB91C1C),
       flatColor: colors.onSurfaceVariant,
       skeletonBaseColor: colors.onSurface.withValues(alpha: 0.12),
+      sparklineColor: colors.primary,
+      sparklineStrokeWidth: 1.5,
       valueStyle: (text.headlineSmall ?? const TextStyle(fontSize: 24))
           .copyWith(
             color: colors.onSurface,
@@ -156,6 +174,8 @@ class StatCardThemeData extends ThemeExtension<StatCardThemeData> {
       downColor: other.downColor ?? downColor,
       flatColor: other.flatColor ?? flatColor,
       skeletonBaseColor: other.skeletonBaseColor ?? skeletonBaseColor,
+      sparklineColor: other.sparklineColor ?? sparklineColor,
+      sparklineStrokeWidth: other.sparklineStrokeWidth ?? sparklineStrokeWidth,
       valueStyle: other.valueStyle ?? valueStyle,
       labelStyle: other.labelStyle ?? labelStyle,
       unitStyle: other.unitStyle ?? unitStyle,
@@ -193,6 +213,8 @@ class StatCardThemeData extends ThemeExtension<StatCardThemeData> {
     Color? downColor,
     Color? flatColor,
     Color? skeletonBaseColor,
+    Color? sparklineColor,
+    double? sparklineStrokeWidth,
     TextStyle? valueStyle,
     TextStyle? labelStyle,
     TextStyle? unitStyle,
@@ -212,6 +234,8 @@ class StatCardThemeData extends ThemeExtension<StatCardThemeData> {
       downColor: downColor ?? this.downColor,
       flatColor: flatColor ?? this.flatColor,
       skeletonBaseColor: skeletonBaseColor ?? this.skeletonBaseColor,
+      sparklineColor: sparklineColor ?? this.sparklineColor,
+      sparklineStrokeWidth: sparklineStrokeWidth ?? this.sparklineStrokeWidth,
       valueStyle: valueStyle ?? this.valueStyle,
       labelStyle: labelStyle ?? this.labelStyle,
       unitStyle: unitStyle ?? this.unitStyle,
@@ -240,6 +264,12 @@ class StatCardThemeData extends ThemeExtension<StatCardThemeData> {
       skeletonBaseColor: Color.lerp(
         skeletonBaseColor,
         other.skeletonBaseColor,
+        t,
+      ),
+      sparklineColor: Color.lerp(sparklineColor, other.sparklineColor, t),
+      sparklineStrokeWidth: _lerpDouble(
+        sparklineStrokeWidth,
+        other.sparklineStrokeWidth,
         t,
       ),
       valueStyle: TextStyle.lerp(valueStyle, other.valueStyle, t),
@@ -277,6 +307,8 @@ class StatCardThemeData extends ThemeExtension<StatCardThemeData> {
         other.downColor == downColor &&
         other.flatColor == flatColor &&
         other.skeletonBaseColor == skeletonBaseColor &&
+        other.sparklineColor == sparklineColor &&
+        other.sparklineStrokeWidth == sparklineStrokeWidth &&
         other.valueStyle == valueStyle &&
         other.labelStyle == labelStyle &&
         other.unitStyle == unitStyle &&
@@ -298,6 +330,8 @@ class StatCardThemeData extends ThemeExtension<StatCardThemeData> {
     downColor,
     flatColor,
     skeletonBaseColor,
+    sparklineColor,
+    sparklineStrokeWidth,
     valueStyle,
     labelStyle,
     unitStyle,
