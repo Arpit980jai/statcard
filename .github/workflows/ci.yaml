@@ -44,6 +44,13 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
+      # pana shells out to cwebp/dwebp to validate and thumbnail the images in
+      # the pubspec screenshots: block. Without libwebp every screenshot is
+      # reported as an issue and the package loses the example/screenshot
+      # points.
+      - name: Install libwebp
+        run: sudo apt-get update && sudo apt-get install -y webp
+
       - name: Install pana
         run: dart pub global activate pana
 
