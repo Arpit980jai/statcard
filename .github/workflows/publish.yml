@@ -90,5 +90,11 @@ jobs:
 
       # --force skips the interactive confirmation, which there is no terminal
       # to answer. It does not skip any server-side validation.
+      #
+      # The timeout matters: if pub.dev has no OIDC trust configured for this
+      # repository, `dart pub publish` falls back to interactive OAuth, prints a
+      # URL and waits on stdin that never arrives — which otherwise sits here
+      # until the six hour default job timeout.
       - name: Publish
+        timeout-minutes: 5
         run: dart pub publish --force
