@@ -1,0 +1,7 @@
+# Tags used by this package's suites. Declaring them here keeps
+# `flutter test` from warning about an unrecognised tag.
+tags:
+  golden:
+    # Golden files are platform sensitive; CI runs with --exclude-tags golden.
+  screenshots:
+    # A generator rather than a test: it rewrites the PNGs under doc/images.
