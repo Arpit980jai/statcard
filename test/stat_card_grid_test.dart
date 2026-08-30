@@ -78,11 +78,89 @@ void main() {
     await tester.binding.setSurfaceSize(const Size(2400, 2400));
     addTearDown(() => tester.binding.setSurfaceSize(null));
 
+    // (600 + 12) / (100 + 12) = 5.46 -> 5 columns of 105.6 px.
     await pumpGrid(tester, width: 600, minCardWidth: 100);
-    expect(columnsInFirstRow(tester), 6);
+    expect(columnsInFirstRow(tester), 5);
 
+    // (600 + 12) / (300 + 12) = 1.96 -> 1 column; two would be 294 px each.
     await pumpGrid(tester, width: 600, minCardWidth: 300);
+    expect(columnsInFirstRow(tester), 1);
+  });
+
+  testWidgets('spacing is counted, so no card is narrower than minCardWidth', (
+    WidgetTester tester,
+  ) async {
+    await tester.binding.setSurfaceSize(const Size(2400, 2400));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+
+    // Widths that the old `(maxWidth / minCardWidth).floor()` formula split
+    // into cards below minCardWidth: at 600/100 it claimed six 90 px columns,
+    // at 600/300 two 294 px columns, at 340/160 two 164 px columns.
+    const List<(double, double)> cases = <(double, double)>[
+      (600, 100),
+      (600, 300),
+      (340, 160),
+      (320, 160),
+      (500, 160),
+      (720, 240),
+    ];
+
+    for (final (double width, double minCardWidth) in cases) {
+      await pumpGrid(tester, width: width, minCardWidth: minCardWidth);
+      final Size size = tester.getSize(find.byWidget(kCards.first));
+      expect(
+        size.width,
+        greaterThanOrEqualTo(minCardWidth - 0.5),
+        reason:
+            'a $width px grid of $minCardWidth px cards produced '
+            '${size.width} px cards',
+      );
+      expect(tester.takeException(), isNull);
+    }
+  });
+
+  testWidgets('a single column is used when even two would be too narrow', (
+    WidgetTester tester,
+  ) async {
+    await tester.binding.setSurfaceSize(const Size(2400, 2400));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+
+    // Two 160 px cards plus a 12 px gap need 332 px.
+    await pumpGrid(tester, width: 331);
+    expect(columnsInFirstRow(tester), 1);
+
+    await pumpGrid(tester, width: 332);
     expect(columnsInFirstRow(tester), 2);
+  });
+
+  testWidgets('a larger spacing costs a column at the same width', (
+    WidgetTester tester,
+  ) async {
+    await tester.binding.setSurfaceSize(const Size(2400, 2400));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Scaffold(
+          body: Align(
+            alignment: Alignment.topLeft,
+            child: SizedBox(
+              width: 500,
+              child: SingleChildScrollView(
+                child: StatCardGrid(spacing: 100, children: kCards),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    // (500 + 100) / (160 + 100) = 2.3 -> 2 columns, not the three that
+    // ignoring spacing would have claimed.
+    expect(columnsInFirstRow(tester), 2);
+    expect(
+      tester.getSize(find.byWidget(kCards.first)).width,
+      greaterThanOrEqualTo(160),
+    );
   });
 
   testWidgets('never overflows at any width from 240 to 2000', (

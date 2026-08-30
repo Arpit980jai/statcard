@@ -4,9 +4,11 @@ import 'stat_card.dart';
 
 /// A responsive grid of [StatCard]s that reflows instead of overflowing.
 ///
-/// The number of columns is derived from the available width and
-/// [minCardWidth], so the same grid works from a 240 px phone to a 2000 px
-/// desktop window without any breakpoint configuration.
+/// The number of columns is derived from the available width, [minCardWidth]
+/// and [spacing] — `((maxWidth + spacing) / (minCardWidth + spacing)).floor()`,
+/// clamped between one column and one column per card — so the same grid works
+/// from a 240 px phone to a 2000 px desktop window without any breakpoint
+/// configuration, and no card is ever narrower than [minCardWidth].
 ///
 /// ```dart
 /// StatCardGrid(
@@ -34,7 +36,9 @@ class StatCardGrid extends StatelessWidget {
 
   /// The narrowest a card may get before a column is dropped.
   ///
-  /// Defaults to `160`.
+  /// The gaps between cards count against the available width, so a card
+  /// really is at least this wide rather than this wide minus its share of
+  /// [spacing]. Defaults to `160`.
   final double minCardWidth;
 
   /// Horizontal gap between cards. Defaults to `12`.
@@ -67,10 +71,16 @@ class StatCardGrid extends StatelessWidget {
           );
         }
 
-        final columns = (maxWidth / minCardWidth).floor().clamp(
-          1,
-          children.length,
-        );
+        // A row of n cards spends spacing * (n - 1) on gaps, so the width a
+        // column really needs is minCardWidth + spacing, with one spacing of
+        // slack because the last column has no gap after it. Dividing by
+        // minCardWidth alone claims a column the cards cannot fit into and
+        // hands every card less than minCardWidth.
+        final double columnPitch = minCardWidth + spacing;
+        final int fitting = columnPitch <= 0
+            ? children.length
+            : ((maxWidth + spacing) / columnPitch).floor();
+        final columns = fitting.clamp(1, children.length);
         final totalSpacing = spacing * (columns - 1);
         // Never let rounding push the row past its constraints.
         final itemWidth = ((maxWidth - totalSpacing) / columns).clamp(
