@@ -85,6 +85,23 @@ jobs:
           git checkout -- analysis_options.yaml example/analysis_options.yaml
           git status --porcelain
 
+      # `dart pub publish` only attempts the OIDC exchange when the runner has
+      # injected these, which happens only if `id-token: write` took effect.
+      # Without them it silently falls back to interactive browser OAuth and
+      # blocks. Checking presence only — never log the token itself.
+      - name: Check OIDC availability
+        run: |
+          if [ -n "$ACTIONS_ID_TOKEN_REQUEST_URL" ]; then
+            echo "OIDC request URL: present"
+          else
+            echo "OIDC request URL: MISSING — id-token: write did not take effect"
+          fi
+          if [ -n "$ACTIONS_ID_TOKEN_REQUEST_TOKEN" ]; then
+            echo "OIDC request token: present"
+          else
+            echo "OIDC request token: MISSING"
+          fi
+
       - name: Dry run
         run: dart pub publish --dry-run
 
