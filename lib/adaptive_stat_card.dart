@@ -19,6 +19,8 @@
 /// ```
 library;
 
+export 'src/fit_cache.dart'
+    show clearFitCache, debugFitCacheLength, kFitCacheMaxEntries;
 export 'src/models/stat_card_layout.dart';
 export 'src/models/stat_card_overflow.dart';
 export 'src/models/stat_card_trend.dart';

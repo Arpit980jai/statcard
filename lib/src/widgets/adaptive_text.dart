@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../fit_cache.dart';
 import '../models/stat_card_overflow.dart';
 
 /// The measured outcome of fitting a string into a box.
@@ -89,15 +90,6 @@ class _FitKey {
   ]);
 }
 
-/// Process wide measurement cache. A single layout pass repeats the same query
-/// many times, and `TextPainter.layout` is the most expensive thing this
-/// package does.
-final Map<_FitKey, _FitResult> _fitCache = <_FitKey, _FitResult>{};
-
-/// Upper bound on cached entries, so a long lived app with changing data can
-/// never grow the cache without limit.
-const int _maxCacheEntries = 512;
-
 /// A text widget that always fits the box it is given.
 ///
 /// This is the measurement engine behind every stat card. It measures the
@@ -152,12 +144,6 @@ class AdaptiveText extends StatelessWidget {
 
   /// Style of [suffix]. Its font size is scaled by the same factor as [text].
   final TextStyle? suffixStyle;
-
-  /// Clears the internal measurement cache.
-  ///
-  /// Only useful in tests that assert on measurement behaviour.
-  @visibleForTesting
-  static void debugClearCache() => _fitCache.clear();
 
   @override
   Widget build(BuildContext context) {
@@ -283,8 +269,8 @@ class AdaptiveText extends StatelessWidget {
       suffix: suffix,
       suffixStyle: baseSuffixStyle,
     );
-    final cached = _fitCache[key];
-    if (cached != null) {
+    final Object? cached = fitCache[key];
+    if (cached is _FitResult) {
       return cached;
     }
 
@@ -297,10 +283,7 @@ class AdaptiveText extends StatelessWidget {
       direction: direction,
     );
 
-    if (_fitCache.length >= _maxCacheEntries) {
-      _fitCache.clear();
-    }
-    _fitCache[key] = result;
+    fitCache[key] = result;
     return result;
   }
 
