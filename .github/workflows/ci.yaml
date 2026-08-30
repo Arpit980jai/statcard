@@ -25,8 +25,12 @@ jobs:
       - name: Analyze
         run: flutter analyze --fatal-infos
 
+      # Goldens are platform sensitive, and the screenshot generator only
+      # rewrites files under doc/images — there is nothing for it to assert on
+      # CI. The boolean selector is deliberate: passing --exclude-tags twice
+      # does not combine the two, the second silently wins.
       - name: Test
-        run: flutter test --exclude-tags golden
+        run: flutter test --exclude-tags "golden || screenshots"
 
       - name: Build the example for web
         run: flutter build web --release
