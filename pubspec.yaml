@@ -1,6 +1,6 @@
 name: adaptive_stat_card
 description: An overflow-safe Flutter stat card widget for dashboards, with adaptive text fitting, accessibility text-scale support and zero runtime dependencies.
-version: 0.1.0
+version: 0.2.0
 repository: https://github.com/Arpit980jai/statcard
 issue_tracker: https://github.com/Arpit980jai/statcard/issues
 topics:
@@ -22,6 +22,28 @@ dev_dependencies:
   flutter_lints: ^6.0.0
   flutter_test:
     sdk: flutter
+
+screenshots:
+  - description: >-
+      A responsive grid of stat cards showing units, trend badges, sparklines
+      and the iconAbove layout.
+    path: doc/images/gallery.png
+  - description: >-
+      The same number and label in a plain Column, overflowing its 200 px card.
+    path: doc/images/overflow-before.png
+  - description: >-
+      The identical content in a StatCard at the same width, fitting cleanly.
+    path: doc/images/overflow-after.png
+  - description: >-
+      StatCard.number degrading 1,250,000 to 1.25M to 1.2M as the card narrows,
+      before any font shrinking.
+    path: doc/images/number-degradation.png
+  - description: >-
+      A row of cards with and without a StatCardSyncScope, which makes them
+      converge on a single font size.
+    path: doc/images/sync-scope.png
+  - description: A stat card grid in dark mode.
+    path: doc/images/dark-mode.png
 
 platforms:
   android:
