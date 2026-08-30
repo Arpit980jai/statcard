@@ -11,6 +11,7 @@ example/.dart_tool/
 # Repository-only material
 .github/
 doc/raw/
+doc/originals/
 *.iml
 .idea/
 
