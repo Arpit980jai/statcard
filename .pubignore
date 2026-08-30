@@ -23,3 +23,11 @@ example/linux/
 example/macos/
 example/windows/
 example/test/
+
+# Supplied mockups, kept in the repository for reference. They do not depict
+# this package and nothing links to them, so they should not weigh down every
+# download. The generated screenshots in doc/images/ do ship: pub.dev requires
+# the files named by the screenshots: block to be inside the archive.
+doc/images/interactive-demo.png
+doc/images/interactive-demo-2.png
+doc/images/overflow-before-original.png

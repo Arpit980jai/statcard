@@ -32,8 +32,9 @@ const List<double> kSeries = <double>[3, 5, 4, 9, 7, 12, 11, 15, 13, 18];
 
 /// Locates `bin/cache/artifacts/material_fonts` in the running SDK.
 ///
-/// The test binary is `<sdk>/bin/cache/artifacts/engine/<platform>/
-/// flutter_tester`, so the artifact directory is a short walk up from it.
+/// The test binary lives at
+/// `SDK/bin/cache/artifacts/engine/PLATFORM/flutter_tester`, so the artifact
+/// directory is a short walk up from it.
 Directory? findMaterialFonts() {
   Directory? dir = File(Platform.resolvedExecutable).parent;
   for (var i = 0; i < 8 && dir != null; i++) {
