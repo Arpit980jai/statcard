@@ -19,9 +19,13 @@
 /// ```
 library;
 
+export 'src/fit_cache.dart'
+    show clearFitCache, debugFitCacheLength, kFitCacheMaxEntries;
 export 'src/models/stat_card_layout.dart';
 export 'src/models/stat_card_overflow.dart';
 export 'src/models/stat_card_trend.dart';
+export 'src/models/stat_card_value_format.dart';
 export 'src/stat_card.dart';
 export 'src/stat_card_grid.dart';
+export 'src/stat_card_sync_scope.dart';
 export 'src/stat_card_theme.dart';

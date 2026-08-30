@@ -77,7 +77,7 @@ int resolvedMaxLines(WidgetTester tester) {
 }
 
 void main() {
-  setUp(AdaptiveText.debugClearCache);
+  setUp(clearFitCache);
 
   group('shrink strategy', () {
     testWidgets('shrinks below the base size when the text is too long', (

@@ -1,0 +1,82 @@
+name: Publish to pub.dev
+
+# Publishing is driven entirely by tags: pushing v0.2.0 publishes 0.2.0. There
+# is no PUB_TOKEN secret anywhere in this workflow. pub.dev is told to trust
+# this repository and this tag pattern, and `dart pub publish` exchanges the
+# GitHub OIDC token minted by `id-token: write` for a short-lived credential.
+#
+# One-time setup on pub.dev, under Admin -> Automated publishing:
+#   * Enable publishing from GitHub Actions
+#   * Repository:   Arpit980jai/statcard
+#   * Tag pattern:  v{{version}}
+#
+# If you also tick "Require GitHub Actions environment" there, add a matching
+# `environment:` key to the job below or the exchange will be refused.
+
+on:
+  push:
+    tags:
+      # Matches v0.2.0 and v1.0.0-beta.1, but not a stray "version-2" tag.
+      - 'v[0-9]+.[0-9]+.[0-9]+*'
+
+# A tag is immutable, but a re-run is not: never let two publishes race.
+concurrency:
+  group: publish-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    permissions:
+      # The whole point: lets the job mint the OIDC token pub.dev verifies.
+      id-token: write
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      # The tag is what triggered this run, but pubspec.yaml is what actually
+      # gets published. If they disagree, stop: a published version can only be
+      # retracted within seven days, never deleted.
+      - name: Check the tag matches pubspec.yaml
+        run: |
+          TAG="${GITHUB_REF_NAME#v}"
+          VERSION="$(grep -m1 '^version:' pubspec.yaml | cut -d' ' -f2 | tr -d '\r')"
+          echo "tag=$TAG pubspec=$VERSION"
+          if [ "$TAG" != "$VERSION" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME does not match pubspec version $VERSION"
+            exit 1
+          fi
+
+      # Re-run the gate against the tagged commit rather than trusting that the
+      # pull request which produced it was green.
+      - name: Verify formatting
+        run: dart format --output=none --set-exit-if-changed .
+
+      - name: Analyze
+        run: flutter analyze --fatal-infos
+
+      # Goldens are platform sensitive and the screenshot generator rewrites
+      # files under doc/images, which would leave the tree dirty and make
+      # `dart pub publish` complain about modified checked-in files.
+      #
+      # Note the boolean selector: passing --exclude-tags twice does not
+      # combine the two, the second silently wins.
+      - name: Test
+        run: flutter test --exclude-tags "golden || screenshots"
+
+      - name: Dry run
+        run: dart pub publish --dry-run
+
+      # --force skips the interactive confirmation, which there is no terminal
+      # to answer. It does not skip any server-side validation.
+      - name: Publish
+        run: dart pub publish --force

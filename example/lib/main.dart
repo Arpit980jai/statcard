@@ -113,6 +113,15 @@ class _GalleryPageState extends State<GalleryPage> {
             const SizedBox(height: 8),
             const _DashboardGrid(),
             const SizedBox(height: 32),
+            _sectionTitle(context, 'Numeric values'),
+            const _NumberSection(),
+            const SizedBox(height: 32),
+            _sectionTitle(context, 'StatCardSyncScope'),
+            const _SyncSection(),
+            const SizedBox(height: 32),
+            _sectionTitle(context, 'Sparklines and card states'),
+            const _StatesSection(),
+            const SizedBox(height: 32),
           ],
         ),
       ),
@@ -339,6 +348,215 @@ class _DashboardGrid extends StatelessWidget {
           icon: Icon(Icons.sentiment_satisfied_alt_outlined),
           trend: StatTrend.up('+0.2'),
         ),
+      ],
+    );
+  }
+}
+
+/// Demonstrates [StatCard.number]: the same figure at shrinking widths, plus a
+/// value that counts to a new reading.
+class _NumberSection extends StatefulWidget {
+  const _NumberSection();
+
+  @override
+  State<_NumberSection> createState() => _NumberSectionState();
+}
+
+class _NumberSectionState extends State<_NumberSection> {
+  static const List<num> _readings = <num>[1250000, 87423, 1248930551, 4980];
+  int _index = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        const Text(
+          'The same number, degraded to fit before the font is touched.',
+        ),
+        const SizedBox(height: 12),
+        Wrap(
+          spacing: 12,
+          runSpacing: 12,
+          children: <Widget>[
+            for (final double width in <double>[220, 140, 116, 100])
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text('${width.round()} px'),
+                  const SizedBox(height: 4),
+                  SizedBox(
+                    width: width,
+                    child: StatCard.number(
+                      1250000,
+                      label: 'Deliveries this month',
+                      icon: const Icon(Icons.local_shipping_outlined),
+                    ),
+                  ),
+                ],
+              ),
+          ],
+        ),
+        const SizedBox(height: 24),
+        const Text('animateValue counts to the new reading.'),
+        const SizedBox(height: 12),
+        Row(
+          children: <Widget>[
+            SizedBox(
+              width: 220,
+              child: StatCard.number(
+                _readings[_index],
+                label: 'Deliveries this month',
+                animateValue: true,
+                icon: const Icon(Icons.local_shipping_outlined),
+                trend: const StatTrend.up('+12.4%'),
+              ),
+            ),
+            const SizedBox(width: 16),
+            FilledButton.tonal(
+              onPressed: () =>
+                  setState(() => _index = (_index + 1) % _readings.length),
+              child: const Text('New reading'),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+/// Demonstrates [StatCardSyncScope] as the before/after it only makes sense as.
+class _SyncSection extends StatefulWidget {
+  const _SyncSection();
+
+  @override
+  State<_SyncSection> createState() => _SyncSectionState();
+}
+
+class _SyncSectionState extends State<_SyncSection> {
+  bool _synced = true;
+
+  Widget _row() {
+    return const Wrap(
+      spacing: 12,
+      runSpacing: 12,
+      children: <Widget>[
+        SizedBox(
+          width: 150,
+          child: StatCard(value: '1,248,930,551', label: 'Deliveries'),
+        ),
+        SizedBox(
+          width: 150,
+          child: StatCard(value: '42', label: 'Open tickets'),
+        ),
+        SizedBox(
+          width: 150,
+          child: StatCard(value: '4.8', label: 'Satisfaction'),
+        ),
+      ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        const Text(
+          'Every card below is 150 px wide. Only the long value has to shrink '
+          '— a scope brings the others down with it.',
+        ),
+        const SizedBox(height: 12),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('Wrap the row in a StatCardSyncScope'),
+          value: _synced,
+          onChanged: (bool v) => setState(() => _synced = v),
+        ),
+        const SizedBox(height: 8),
+        StatCardSyncScope(enabled: _synced, child: _row()),
+      ],
+    );
+  }
+}
+
+/// Demonstrates sparklines alongside the loading, error, empty and selected
+/// states.
+class _StatesSection extends StatefulWidget {
+  const _StatesSection();
+
+  @override
+  State<_StatesSection> createState() => _StatesSectionState();
+}
+
+class _StatesSectionState extends State<_StatesSection> {
+  static const List<double> _series = <double>[
+    3,
+    5,
+    4,
+    9,
+    7,
+    12,
+    11,
+    15,
+    13,
+    18,
+  ];
+
+  int _selected = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Wrap(
+      spacing: 12,
+      runSpacing: 12,
+      children: <Widget>[
+        SizedBox(
+          width: 200,
+          child: StatCard(
+            value: '4.2',
+            label: 'Revenue',
+            unit: 'Cr',
+            sparkline: _series,
+            icon: const Icon(Icons.currency_rupee),
+            trend: const StatTrend.up('+3.1%'),
+            selected: _selected == 0,
+            onTap: () => setState(() => _selected = 0),
+          ),
+        ),
+        SizedBox(
+          width: 200,
+          child: StatCard(
+            value: '1,248',
+            label: 'Deliveries',
+            sparkline: _series,
+            icon: const Icon(Icons.local_shipping_outlined),
+            selected: _selected == 1,
+            onTap: () => setState(() => _selected = 1),
+            onLongPress: () => ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Long pressed Deliveries')),
+            ),
+          ),
+        ),
+        const SizedBox(
+          width: 200,
+          child: StatCard(
+            value: '',
+            label: 'Queue depth',
+            icon: Icon(Icons.error_outline),
+            error: 'The metrics service did not respond within 30 seconds',
+          ),
+        ),
+        const SizedBox(
+          width: 200,
+          child: StatCard(
+            value: '',
+            label: 'Refunds',
+            icon: Icon(Icons.receipt_long_outlined),
+          ),
+        ),
+        const SizedBox(width: 200, child: StatCard.loading()),
       ],
     );
   }

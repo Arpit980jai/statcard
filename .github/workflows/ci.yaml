@@ -25,8 +25,12 @@ jobs:
       - name: Analyze
         run: flutter analyze --fatal-infos
 
+      # Goldens are platform sensitive, and the screenshot generator only
+      # rewrites files under doc/images — there is nothing for it to assert on
+      # CI. The boolean selector is deliberate: passing --exclude-tags twice
+      # does not combine the two, the second silently wins.
       - name: Test
-        run: flutter test --exclude-tags golden
+        run: flutter test --exclude-tags "golden || screenshots"
 
       - name: Build the example for web
         run: flutter build web --release
@@ -43,6 +47,13 @@ jobs:
 
       - name: Install dependencies
         run: flutter pub get
+
+      # pana shells out to cwebp/dwebp to validate and thumbnail the images in
+      # the pubspec screenshots: block. Without libwebp every screenshot is
+      # reported as an issue and the package loses the example/screenshot
+      # points.
+      - name: Install libwebp
+        run: sudo apt-get update && sudo apt-get install -y webp
 
       - name: Install pana
         run: dart pub global activate pana
