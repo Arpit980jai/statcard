@@ -102,14 +102,14 @@ void main() {
 
     test('repaints only when something it draws changed', () {
       final SparklinePainter base = painterFor(<double>[1, 2, 3]);
-      expect(base.shouldRepaint(painterFor(<double>[1, 2, 3])), isFalse);
+      expect(base.shouldRepaint(painterFor(const <double>[1, 2, 3])), isFalse);
       expect(base.shouldRepaint(painterFor(<double>[1, 2, 4])), isTrue);
       expect(base.shouldRepaint(painterFor(<double>[1, 2])), isTrue);
       expect(
         base.shouldRepaint(
-          SparklinePainter(
-            points: const <double>[1, 2, 3],
-            color: const Color(0xFFFF0000),
+          const SparklinePainter(
+            points: <double>[1, 2, 3],
+            color: Color(0xFFFF0000),
             strokeWidth: 1.5,
           ),
         ),
@@ -117,8 +117,8 @@ void main() {
       );
       expect(
         base.shouldRepaint(
-          SparklinePainter(
-            points: const <double>[1, 2, 3],
+          const SparklinePainter(
+            points: <double>[1, 2, 3],
             color: kInk,
             strokeWidth: 3,
           ),
