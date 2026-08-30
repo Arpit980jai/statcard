@@ -73,6 +73,18 @@ jobs:
       - name: Test
         run: flutter test --exclude-tags "golden || screenshots"
 
+      # `flutter pub get` on 3.47+ rewrites both analysis_options.yaml files
+      # ("Upgrading analysis_options.yaml to exclude build and platform
+      # directories"), and `flutter analyze` runs pub get again for the example,
+      # so the tree is dirty by the time publishing starts. `dart pub publish`
+      # refuses to publish from a dirty git state, which is the right default —
+      # so restore exactly the files the tool touched, and let anything else it
+      # modifies fail loudly.
+      - name: Restore files the Flutter tool rewrote
+        run: |
+          git checkout -- analysis_options.yaml example/analysis_options.yaml
+          git status --porcelain
+
       - name: Dry run
         run: dart pub publish --dry-run
 
