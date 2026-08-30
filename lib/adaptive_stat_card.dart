@@ -26,4 +26,5 @@ export 'src/models/stat_card_overflow.dart';
 export 'src/models/stat_card_trend.dart';
 export 'src/stat_card.dart';
 export 'src/stat_card_grid.dart';
+export 'src/stat_card_sync_scope.dart';
 export 'src/stat_card_theme.dart';
