@@ -211,6 +211,7 @@ void main() {
       );
       expect(
         tester.getSemantics(find.bySemanticsLabel('One: 1')),
+        // ignore: deprecated_member_use
         containsSemantics(hasLongPressAction: true),
       );
       handle.dispose();
@@ -242,6 +243,7 @@ void main() {
       );
       expect(
         tester.getSemantics(find.bySemanticsLabel('One: 1')),
+        // ignore: deprecated_member_use
         containsSemantics(isSelected: true),
       );
       handle.dispose();
@@ -254,6 +256,7 @@ void main() {
       await pump(tester, const StatCard(value: '1', label: 'One'));
       expect(
         tester.getSemantics(find.bySemanticsLabel('One: 1')),
+        // ignore: deprecated_member_use
         containsSemantics(isSelected: false),
       );
       handle.dispose();

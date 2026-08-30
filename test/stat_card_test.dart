@@ -247,6 +247,7 @@ void main() {
       await pump(tester, StatCard(value: '1', label: 'One', onTap: () {}));
       expect(
         tester.getSemantics(find.bySemanticsLabel('One: 1')),
+        // ignore: deprecated_member_use
         containsSemantics(label: 'One: 1', isButton: true, hasTapAction: true),
       );
       handle.dispose();
